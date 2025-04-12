@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { orders, products } from "../../data/mockData";
 import { Order, OrderStatus, Product } from "../../types";
@@ -26,6 +27,14 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { 
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from "@/components/ui/select";
 import { 
   ChevronDown, 
   Package, 
@@ -33,13 +42,18 @@ import {
   Edit, 
   Trash2, 
   Plus,
-  LogOut
+  LogOut,
+  Search,
+  Filter
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user, isAdmin, logout } = useAuth();
   const [ordersList, setOrdersList] = useState<Order[]>(orders);
   const [productsList, setProductsList] = useState<Product[]>(products);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const navigate = useNavigate();
   
   // Protect admin route
@@ -82,7 +96,9 @@ export default function AdminDashboard() {
   
   // Delete product
   const deleteProduct = (productId: string) => {
-    setProductsList(prev => prev.filter(product => product.id !== productId));
+    const updatedProducts = productsList.filter(product => product.id !== productId);
+    setProductsList(updatedProducts);
+    setFilteredProducts(filterProducts(updatedProducts, searchTerm, categoryFilter));
   };
   
   // Format date
@@ -94,6 +110,22 @@ export default function AdminDashboard() {
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
+
+  // Filter and search products
+  const filterProducts = (products: Product[], term: string, category: string) => {
+    return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(term.toLowerCase()) ||
+                         product.description.toLowerCase().includes(term.toLowerCase());
+      const matchesCategory = category === "all" || product.category === category;
+      
+      return matchesSearch && matchesCategory;
+    });
+  };
+
+  // Apply filters when search term or category changes
+  useEffect(() => {
+    setFilteredProducts(filterProducts(productsList, searchTerm, categoryFilter));
+  }, [searchTerm, categoryFilter, productsList]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -161,6 +193,32 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle>Products</CardTitle>
             <CardDescription>Manage and update your product catalog</CardDescription>
+            <div className="flex flex-col md:flex-row gap-4 mt-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+              <div className="flex items-center w-full md:w-48 gap-2">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="milk">Milk</SelectItem>
+                    <SelectItem value="shrikhand">Shrikhand</SelectItem>
+                    <SelectItem value="drinks">Drinks</SelectItem>
+                    <SelectItem value="others">Others</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -175,56 +233,64 @@ export default function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {productsList.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
-                            <img 
-                              src={product.images[0]} 
-                              alt={product.name}
-                              className="w-full h-full object-cover" 
-                            />
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
+                              <img 
+                                src={product.images[0]} 
+                                alt={product.name}
+                                className="w-full h-full object-cover" 
+                              />
+                            </div>
+                            <span>{product.name}</span>
                           </div>
-                          <span>{product.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="capitalize">{product.category}</TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
-                      <TableCell>
-                        {product.inStock ? (
-                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
-                            In Stock
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
-                            Out of Stock
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            asChild
-                          >
-                            <Link to={`/admin/products/${product.id}`}>
-                              <Edit className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="text-red-500 hover:text-red-700"
-                            onClick={() => deleteProduct(product.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        </TableCell>
+                        <TableCell className="capitalize">{product.category}</TableCell>
+                        <TableCell>${product.price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          {product.inStock ? (
+                            <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                              In Stock
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+                              Out of Stock
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              asChild
+                            >
+                              <Link to={`/admin/products/${product.id}`}>
+                                <Edit className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">
+                        No products found matching your search
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
