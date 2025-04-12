@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { orders } from "../data/mockData";
-import { Order, OrderStatus } from "../types";
+import { Order, OrderStatus as OrderStatusType } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { 
   Card, 
@@ -49,7 +48,7 @@ export default function OrderStatus() {
   }, [user]);
   
   // Helper functions to determine the status display
-  const getStatusIcon = (status: OrderStatus) => {
+  const getStatusIcon = (status: OrderStatusType) => {
     switch(status) {
       case "placed":
         return <ClipboardCheck className="h-6 w-6" />;
@@ -64,7 +63,7 @@ export default function OrderStatus() {
     }
   };
   
-  const getStatusColor = (status: OrderStatus) => {
+  const getStatusColor = (status: OrderStatusType) => {
     switch(status) {
       case "placed":
         return "bg-blue-500";
@@ -79,7 +78,7 @@ export default function OrderStatus() {
     }
   };
   
-  const getStatusText = (status: OrderStatus) => {
+  const getStatusText = (status: OrderStatusType) => {
     switch(status) {
       case "placed":
         return "Order Placed";
@@ -94,7 +93,7 @@ export default function OrderStatus() {
     }
   };
   
-  const getProgressValue = (status: OrderStatus) => {
+  const getProgressValue = (status: OrderStatusType) => {
     switch(status) {
       case "placed":
         return 25;

@@ -23,6 +23,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import EditProduct from "./pages/admin/EditProduct";
 import NotFound from "./pages/NotFound";
 
+// Create a client
 const queryClient = new QueryClient();
 
 const App = () => (
