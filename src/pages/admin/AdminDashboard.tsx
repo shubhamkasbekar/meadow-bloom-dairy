@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { orders, products } from "../../data/mockData";
 import { Order, OrderStatus, Product } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
@@ -33,13 +32,15 @@ import {
   ShoppingBag, 
   Edit, 
   Trash2, 
-  Plus 
+  Plus,
+  LogOut
 } from "lucide-react";
 
 export default function AdminDashboard() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const [ordersList, setOrdersList] = useState<Order[]>(orders);
   const [productsList, setProductsList] = useState<Product[]>(products);
+  const navigate = useNavigate();
   
   // Protect admin route
   if (!user || !isAdmin()) {
@@ -61,6 +62,12 @@ export default function AdminDashboard() {
       </div>
     );
   }
+  
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   
   // Update order status
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
@@ -93,12 +100,22 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <Button asChild className="bg-dairy-accent hover:bg-dairy-brown">
-            <Link to="/admin/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Product
-            </Link>
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              className="flex items-center"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <Button asChild className="bg-dairy-accent hover:bg-dairy-brown">
+              <Link to="/admin/products/new">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Product
+              </Link>
+            </Button>
+          </div>
         </div>
         
         {/* Overview Cards */}
