@@ -27,7 +27,7 @@ export default function FeatureCard({ title, description, icon }: FeatureCardPro
   const IconComponent = iconMap[icon] || Leaf;
 
   return (
-    <Card className="h-full bg-dairy-green hover:shadow-md transition-shadow">
+    <Card className="h-full bg-white hover:shadow-md transition-shadow border border-dairy-light-accent">
       <CardContent className="p-6 text-center">
         <div className="mb-4 mx-auto bg-dairy-accent text-white rounded-full p-3 w-fit">
           <IconComponent className="h-6 w-6" />

@@ -23,7 +23,7 @@ export default function CategoryCard({ name, image, link }: CategoryCardProps) {
             <h3 className="text-2xl font-bold text-white shadow-text">{name}</h3>
           </div>
         </div>
-        <CardContent className="p-4 bg-dairy-green">
+        <CardContent className="p-4 bg-dairy-primary text-white">
           <p className="text-center font-medium">View All {name} Products</p>
         </CardContent>
       </Card>

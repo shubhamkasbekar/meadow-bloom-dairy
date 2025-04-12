@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         <CardContent className="p-4">
           <div className="mb-1">
-            <span className="inline-block px-2 py-1 text-xs bg-dairy-green text-dairy-brown rounded-full">
+            <span className="inline-block px-2 py-1 text-xs bg-dairy-light-primary text-dairy-primary rounded-full">
               {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
             </span>
           </div>
@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardFooter className="p-4 pt-0">
           <Button 
             onClick={handleAddToCart}
-            className="w-full bg-dairy-accent hover:bg-dairy-brown text-white"
+            className="w-full bg-dairy-cta hover:bg-dairy-cta/90 text-white"
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             Add to Cart
