@@ -56,7 +56,14 @@ export default function AdminDashboard() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const navigate = useNavigate();
   
-  // Protect admin route
+  // Apply filters when search term or category changes
+  useEffect(() => {
+    if (user && isAdmin()) {
+      setFilteredProducts(filterProducts(productsList, searchTerm, categoryFilter));
+    }
+  }, [searchTerm, categoryFilter, productsList, user, isAdmin]);
+  
+  // Protect admin route - IMPORTANT: Move this after all hooks are called
   if (!user || !isAdmin()) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -121,11 +128,6 @@ export default function AdminDashboard() {
       return matchesSearch && matchesCategory;
     });
   };
-
-  // Apply filters when search term or category changes
-  useEffect(() => {
-    setFilteredProducts(filterProducts(productsList, searchTerm, categoryFilter));
-  }, [searchTerm, categoryFilter, productsList]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
