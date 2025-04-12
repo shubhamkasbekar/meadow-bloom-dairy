@@ -35,28 +35,28 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-dairy-primary text-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-xl font-bold text-dairy-accent">Meadow Bloom</span>
-            <span className="text-xl font-light ml-1">Dairy</span>
+            <span className="text-xl font-bold text-white">Meadow Bloom</span>
+            <span className="text-xl font-light ml-1 text-dairy-accent">Dairy</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-gray-700 hover:text-dairy-accent transition-colors">
+            <Link to="/" className="text-white hover:text-dairy-accent transition-colors">
               Home
             </Link>
-            <Link to="/products" className="text-gray-700 hover:text-dairy-accent transition-colors">
+            <Link to="/products" className="text-white hover:text-dairy-accent transition-colors">
               Products
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-dairy-accent transition-colors">
+            <Link to="/contact" className="text-white hover:text-dairy-accent transition-colors">
               Contact
             </Link>
             {isAdmin() && (
-              <Link to="/admin" className="text-gray-700 hover:text-dairy-accent transition-colors">
+              <Link to="/admin" className="text-white hover:text-dairy-accent transition-colors">
                 Admin
               </Link>
             )}
@@ -66,11 +66,11 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Hello, {user.firstName}</span>
+                <span className="text-sm text-dairy-light-accent">Hello, {user.firstName}</span>
                 <Button 
                   variant="outline" 
                   onClick={handleLogout}
-                  className="flex items-center"
+                  className="flex items-center text-white border-white hover:bg-dairy-mid-primary"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
@@ -81,14 +81,14 @@ export default function Navbar() {
                 <Button
                   variant="outline"
                   onClick={() => navigate("/login")}
-                  className="flex items-center"
+                  className="flex items-center text-white border-white hover:bg-dairy-mid-primary"
                 >
                   <LogIn className="h-4 w-4 mr-2" />
                   Login
                 </Button>
                 <Button
                   onClick={() => navigate("/signup")}
-                  className="bg-dairy-accent hover:bg-dairy-brown text-white flex items-center"
+                  className="bg-dairy-cta hover:bg-dairy-cta/90 text-white flex items-center"
                 >
                   <User className="h-4 w-4 mr-2" />
                   Sign Up
@@ -99,11 +99,11 @@ export default function Navbar() {
             <Button 
               variant="ghost" 
               onClick={() => navigate("/cart")}
-              className="relative"
+              className="relative text-white hover:bg-dairy-mid-primary"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-dairy-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-dairy-cta text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
@@ -115,11 +115,11 @@ export default function Navbar() {
             <Button
               variant="ghost"
               onClick={() => navigate("/cart")}
-              className="relative"
+              className="relative text-white hover:bg-dairy-mid-primary"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-dairy-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-dairy-cta text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
@@ -127,25 +127,25 @@ export default function Navbar() {
             
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-dairy-mid-primary">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-[250px] sm:w-[300px]">
                 <div className="flex flex-col h-full">
                   <div className="py-4">
-                    <h2 className="text-xl font-bold mb-4">Meadow Bloom Dairy</h2>
+                    <h2 className="text-xl font-bold mb-4 text-dairy-primary">Meadow Bloom Dairy</h2>
                     
                     {user ? (
-                      <div className="mb-6 p-4 bg-dairy-green rounded-md">
+                      <div className="mb-6 p-4 bg-dairy-light-accent rounded-md">
                         <p className="text-sm text-gray-600">Logged in as</p>
-                        <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        <p className="font-medium text-dairy-primary">{user.firstName} {user.lastName}</p>
                       </div>
                     ) : (
                       <div className="mb-6 space-y-2">
                         <Button 
                           variant="outline" 
-                          className="w-full justify-start"
+                          className="w-full justify-start border-dairy-primary text-dairy-primary hover:bg-dairy-light-accent"
                           onClick={() => navigate("/login")}
                           asChild
                         >
@@ -158,7 +158,7 @@ export default function Navbar() {
                         </Button>
                         
                         <Button 
-                          className="w-full justify-start bg-dairy-accent hover:bg-dairy-brown"
+                          className="w-full justify-start bg-dairy-cta hover:bg-dairy-cta/90"
                           onClick={() => navigate("/signup")}
                           asChild
                         >
@@ -176,7 +176,7 @@ export default function Navbar() {
                       <SheetClose asChild>
                         <Link
                           to="/"
-                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-peach"
+                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
                         >
                           <Home className="mr-2 h-4 w-4" />
                           Home
@@ -186,7 +186,7 @@ export default function Navbar() {
                       <SheetClose asChild>
                         <Link
                           to="/products"
-                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-peach"
+                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
                         >
                           <Package className="mr-2 h-4 w-4" />
                           Products
@@ -196,7 +196,7 @@ export default function Navbar() {
                       <SheetClose asChild>
                         <Link
                           to="/contact"
-                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-peach"
+                          className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
                         >
                           <Phone className="mr-2 h-4 w-4" />
                           Contact
@@ -207,7 +207,7 @@ export default function Navbar() {
                         <SheetClose asChild>
                           <Link
                             to="/admin"
-                            className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-peach"
+                            className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
                           >
                             <Settings className="mr-2 h-4 w-4" />
                             Admin
@@ -222,7 +222,7 @@ export default function Navbar() {
                       <SheetClose asChild>
                         <Button 
                           variant="outline" 
-                          className="w-full justify-start"
+                          className="w-full justify-start text-dairy-primary border-dairy-primary hover:bg-dairy-light-accent"
                           onClick={handleLogout}
                         >
                           <LogOut className="mr-2 h-4 w-4" />

@@ -39,15 +39,15 @@ export default function Products() {
   }, [selectedCategory, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-dairy-light-accent py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Our Products</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-dairy-primary">Our Products</h1>
         
         {/* Filters and Search */}
         <div className="mb-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Category filter (sidebar on desktop, top on mobile) */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="font-semibold text-lg mb-4">Categories</h3>
+            <h3 className="font-semibold text-lg mb-4 text-dairy-primary">Categories</h3>
             
             <RadioGroup 
               defaultValue={selectedCategory || "all"}
@@ -79,7 +79,7 @@ export default function Products() {
             
             <Separator className="my-6" />
             
-            <h3 className="font-semibold text-lg mb-4">Search</h3>
+            <h3 className="font-semibold text-lg mb-4 text-dairy-primary">Search</h3>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
@@ -104,7 +104,7 @@ export default function Products() {
               </>
             ) : (
               <div className="bg-white p-10 rounded-lg text-center">
-                <h3 className="text-xl font-semibold mb-2">No products found</h3>
+                <h3 className="text-xl font-semibold mb-2 text-dairy-primary">No products found</h3>
                 <p className="text-gray-600">Try adjusting your filters or search term.</p>
               </div>
             )}

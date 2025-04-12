@@ -63,13 +63,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for dairy theme
+				// Updated dairy theme with new color palette
 				dairy: {
-					"green": "#F2FCE2",
-					"peach": "#FDE1D3",
-					"accent": "#F97316",
-					"brown": "#8B4513",
-					"cream": "#FFFDD0"
+					"primary": "#0B2C65",   // Deep Blue
+					"accent": "#00AEEF",     // Sky Blue
+					"cta": "#E4002B",        // Bold Red
+					"green": "#2E7D32",      // Leaf Green
+					"background": "#FFFFFF", // White
+					"light-accent": "#E6F7FD", // Light version of accent blue
+					"light-primary": "#E6EBF4", // Light version of primary blue
+					"mid-primary": "#0D3F89", // Mid tone of primary for hover states
+					"cream": "#FFFEF5"        // Cream color for some sections
 				}
 			},
 			borderRadius: {

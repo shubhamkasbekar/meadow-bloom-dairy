@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-dairy-brown text-white">
+    <footer className="bg-dairy-primary text-white">
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Company Info */}
@@ -55,15 +55,15 @@ export default function Footer() {
             <h3 className="text-xl font-semibold mb-4 text-white">Contact Us</h3>
             <div className="space-y-3 text-gray-200">
               <p className="flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
+                <MapPin className="h-5 w-5 mr-2 text-dairy-accent" />
                 123 Dairy Lane, Farm County
               </p>
               <p className="flex items-center">
-                <Phone className="h-5 w-5 mr-2" />
+                <Phone className="h-5 w-5 mr-2 text-dairy-accent" />
                 (123) 456-7890
               </p>
               <p className="flex items-center">
-                <Mail className="h-5 w-5 mr-2" />
+                <Mail className="h-5 w-5 mr-2 text-dairy-accent" />
                 info@meadowbloomdairy.com
               </p>
             </div>

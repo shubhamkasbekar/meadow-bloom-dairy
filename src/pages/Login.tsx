@@ -32,10 +32,10 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dairy-green py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-dairy-light-accent py-12 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-dairy-primary">Welcome Back</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access your account
           </CardDescription>
@@ -43,7 +43,7 @@ export default function Login() {
         
         <CardContent className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-100 text-red-600 rounded-md text-sm">
+            <div className="p-3 bg-red-100 text-dairy-cta rounded-md text-sm">
               {error}
             </div>
           )}
@@ -80,7 +80,7 @@ export default function Login() {
             
             <Button 
               type="submit" 
-              className="w-full bg-dairy-accent hover:bg-dairy-brown"
+              className="w-full bg-dairy-primary hover:bg-dairy-mid-primary text-white"
               disabled={isLoading}
             >
               {isLoading ? (
