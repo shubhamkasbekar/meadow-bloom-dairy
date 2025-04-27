@@ -14,25 +14,25 @@ export default function Home() {
     {
       name: "Milk",
       image:
-        "https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fG1pbGt8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
+        "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/Milk.jpg",
       link: "/products?category=milk",
     },
     {
       name: "Shrikhand",
       image:
-        "https://images.unsplash.com/photo-1620179282320-da5c53dd9ed3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8eW9ndXJ0JTIwZGVzc2VydHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+        "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/Shrikhand.jpg",
       link: "/products?category=shrikhand",
     },
     {
-      name: "Drinks",
+      name: "Amrakhand",
       image:
-        "https://images.unsplash.com/photo-1615478503562-ec2d8aa0e24e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFzc2l8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
+        "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/amrakhand.jpg",
       link: "/products?category=drinks",
     },
     {
       name: "Others",
       image:
-        "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGFuZWVyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slider-4.jpg",
       link: "/products?category=others",
     },
   ];

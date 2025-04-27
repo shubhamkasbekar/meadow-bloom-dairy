@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface CarouselItem {
@@ -66,12 +66,6 @@ export default function HomeCarousel({ items }: HomeCarouselProps) {
               <p className="text-xl md:text-2xl mb-8 animate-slide-in">
                 {item.description}
               </p>
-              <Button
-                className="bg-dairy-accent hover:bg-dairy-brown text-white"
-                size="lg"
-              >
-                Shop Now
-              </Button>
             </div>
           </div>
         </div>

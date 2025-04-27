@@ -308,25 +308,32 @@ export const testimonials = [
 // Carousel items for homepage
 export const carouselItems = [
   {
+    id: "0",
+    title: "Welcome to Ramvishwas Dairy",
+    description: "A sweet treat for your special moments",
+    image:
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slider-4.jpg",
+  },
+  {
     id: "1",
     title: "Farm Fresh Milk",
     description: "Straight from our farm to your table",
     image:
-      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-1.jpg",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slider-1.jpg",
   },
   {
     id: "2",
     title: "Artisanal Dairy Products",
     description: "Crafted with care using traditional methods",
     image:
-      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-2.jpg",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slider-2.jpg",
   },
   {
     id: "3",
-    title: "Organic Shrikhand",
+    title: "Shrikhand",
     description: "A sweet treat for your special moments",
     image:
-      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-3.jpg",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slider-3.jpg",
   },
 ];
 
