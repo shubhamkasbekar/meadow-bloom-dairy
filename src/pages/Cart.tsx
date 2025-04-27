@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useOrder } from "../contexts/OrderContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,10 +26,11 @@ export default function Cart() {
   const { items, removeFromCart, updateQuantity, clearCart, totalAmount } =
     useCart();
   const { user } = useAuth();
+  const { placeOrder, isLoading } = useOrder();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!user) {
       toast.error("Please login to checkout");
       navigate("/login");
@@ -37,13 +39,20 @@ export default function Cart() {
 
     setIsProcessing(true);
 
-    // Simulate processing
-    setTimeout(() => {
-      toast.success("Order placed successfully!");
-      clearCart();
-      navigate("/order-status");
+    try {
+      // Use the OrderContext's placeOrder function
+      const orderId = await placeOrder();
+
+      if (orderId) {
+        // If order was created successfully, navigate to order status
+        navigate("/order-status");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast.error("Failed to place order. Please try again.");
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -166,9 +175,9 @@ export default function Cart() {
                   <Button
                     className="w-full bg-dairy-accent hover:bg-dairy-brown"
                     onClick={handleCheckout}
-                    disabled={isProcessing}
+                    disabled={isProcessing || isLoading}
                   >
-                    {isProcessing ? (
+                    {isProcessing || isLoading ? (
                       <span className="flex items-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"

@@ -59,6 +59,44 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Firebase (Firestore & Authentication)
+
+## Firebase Setup
+
+This project uses Firebase Firestore for data storage (products, orders, cart) but handles authentication using localStorage for simplicity. To set up Firebase for this project:
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+2. Add a web app to your Firebase project
+3. Create a Firestore database
+4. Update the Firebase configuration in `src/lib/firebase.ts` with your own Firebase project credentials:
+
+```js
+// Replace with your actual Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
+```
+
+5. Initialize Firestore with mock data by uncommenting the initialization line in `src/main.tsx`:
+
+```js
+// Uncomment this line to populate Firestore with initial data
+// initializeFirestore().catch(console.error);
+```
+
+Or use the Initialize Firestore button in the admin dashboard.
+
+**Note:** Authentication is handled locally via localStorage for simplicity. User credentials are stored in Firestore but managed manually. This approach is not secure for production and is used for demonstration purposes only.
+
+The admin login is static:
+
+- Email: admin@dairyfarm.com
+- Password: admin123
 
 ## How can I deploy this project?
 

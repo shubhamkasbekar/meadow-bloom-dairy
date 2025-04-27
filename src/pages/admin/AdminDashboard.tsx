@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { orders, products } from "../../data/mockData";
+import { products } from "../../data/mockData";
 import { Order, OrderStatus, Product } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -44,16 +44,57 @@ import {
   LogOut,
   Search,
   Filter,
+  Database,
+  Loader2,
 } from "lucide-react";
+import InitializeFirestoreButton from "../../components/admin/InitializeFirestoreButton";
+import {
+  getAllProducts,
+  deleteProduct as deleteFirestoreProduct,
+} from "../../lib/productService";
+import {
+  getAllOrders,
+  updateOrderStatus as updateFirestoreOrderStatus,
+} from "../../lib/orderService";
+import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const { user, isAdmin, logout } = useAuth();
-  const [ordersList, setOrdersList] = useState<Order[]>(orders);
-  const [productsList, setProductsList] = useState<Product[]>(products);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [ordersList, setOrdersList] = useState<Order[]>([]);
+  const [productsList, setProductsList] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+
+  // Fetch data from Firestore
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && isAdmin()) {
+        setIsLoading(true);
+        try {
+          // Fetch products
+          const productsData = await getAllProducts();
+          setProductsList(productsData);
+          setFilteredProducts(
+            filterProducts(productsData, searchTerm, categoryFilter)
+          );
+
+          // Fetch orders
+          const ordersData = await getAllOrders();
+          setOrdersList(ordersData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          toast.error("Failed to load data from Firestore");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user, isAdmin]);
 
   // Apply filters when search term or category changes
   useEffect(() => {
@@ -92,23 +133,48 @@ export default function AdminDashboard() {
   };
 
   // Update order status
-  const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
-    setOrdersList((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
+  const handleUpdateOrderStatus = async (
+    orderId: string,
+    newStatus: OrderStatus
+  ) => {
+    try {
+      // Update in Firestore
+      await updateFirestoreOrderStatus(orderId, newStatus);
+
+      // Update local state
+      setOrdersList((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+
+      toast.success(`Order status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      toast.error("Failed to update order status");
+    }
   };
 
   // Delete product
-  const deleteProduct = (productId: string) => {
-    const updatedProducts = productsList.filter(
-      (product) => product.id !== productId
-    );
-    setProductsList(updatedProducts);
-    setFilteredProducts(
-      filterProducts(updatedProducts, searchTerm, categoryFilter)
-    );
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      // Delete from Firestore
+      await deleteFirestoreProduct(productId);
+
+      // Update local state
+      const updatedProducts = productsList.filter(
+        (product) => product.id !== productId
+      );
+      setProductsList(updatedProducts);
+      setFilteredProducts(
+        filterProducts(updatedProducts, searchTerm, categoryFilter)
+      );
+
+      toast.success("Product deleted successfully");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product");
+    }
   };
 
   // Format date
@@ -138,6 +204,17 @@ export default function AdminDashboard() {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+          <p>Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
@@ -160,6 +237,28 @@ export default function AdminDashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Initialize Firestore */}
+        <Card className="mb-8">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div className="space-y-1">
+              <CardTitle>Database Management</CardTitle>
+              <CardDescription>
+                Initialize and manage Firestore database
+              </CardDescription>
+            </div>
+            <div className="bg-dairy-green p-2 rounded-full">
+              <Database className="h-6 w-6 text-dairy-accent" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 mb-4">
+              This will populate the Firestore database with mock data from the
+              application. Use this only once when setting up the database.
+            </p>
+            <InitializeFirestoreButton />
+          </CardContent>
+        </Card>
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -238,6 +337,7 @@ export default function AdminDashboard() {
                     <SelectItem value="milk">Milk</SelectItem>
                     <SelectItem value="shrikhand">Shrikhand</SelectItem>
                     <SelectItem value="drinks">Drinks</SelectItem>
+                    <SelectItem value="basundi">Basundi</SelectItem>
                     <SelectItem value="others">Others</SelectItem>
                   </SelectContent>
                 </Select>
@@ -304,7 +404,7 @@ export default function AdminDashboard() {
                               variant="outline"
                               size="sm"
                               className="text-red-500 hover:text-red-700"
-                              onClick={() => deleteProduct(product.id)}
+                              onClick={() => handleDeleteProduct(product.id)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -348,64 +448,81 @@ export default function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ordersList.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium">
-                        #{order.id.substring(0, 8)}
-                      </TableCell>
-                      <TableCell>{formatDate(order.createdAt)}</TableCell>
-                      <TableCell>
-                        {order.items.reduce(
-                          (sum, item) => sum + item.quantity,
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={order.status} />
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              Update Status{" "}
-                              <ChevronDown className="ml-2 h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "placed")
-                              }
-                            >
-                              Order Placed
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "processing")
-                              }
-                            >
-                              Processing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "out-for-delivery")
-                              }
-                            >
-                              Out for Delivery
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "delivered")
-                              }
-                            >
-                              Delivered
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                  {ordersList.length > 0 ? (
+                    ordersList.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">
+                          #{order.id.substring(0, 8)}
+                        </TableCell>
+                        <TableCell>{formatDate(order.createdAt)}</TableCell>
+                        <TableCell>
+                          {order.items.reduce(
+                            (sum, item) => sum + item.quantity,
+                            0
+                          )}
+                        </TableCell>
+                        <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={order.status} />
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                Update Status{" "}
+                                <ChevronDown className="ml-2 h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateOrderStatus(order.id, "placed")
+                                }
+                              >
+                                Order Placed
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateOrderStatus(
+                                    order.id,
+                                    "processing"
+                                  )
+                                }
+                              >
+                                Processing
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateOrderStatus(
+                                    order.id,
+                                    "out-for-delivery"
+                                  )
+                                }
+                              >
+                                Out for Delivery
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateOrderStatus(order.id, "delivered")
+                                }
+                              >
+                                Delivered
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        className="text-center py-4 text-gray-500"
+                      >
+                        No orders found
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>

@@ -14,6 +14,7 @@ import {
   Home,
   Phone,
   Settings,
+  ClipboardList,
 } from "lucide-react";
 import {
   Sheet,
@@ -65,6 +66,14 @@ export default function Navbar() {
             >
               Contact
             </Link>
+            {user && (
+              <Link
+                to="/order-status"
+                className="text-white hover:text-dairy-accent transition-colors"
+              >
+                Orders
+              </Link>
+            )}
             {isAdmin() && (
               <Link
                 to="/admin"
@@ -224,6 +233,18 @@ export default function Navbar() {
                           Contact
                         </Link>
                       </SheetClose>
+
+                      {user && (
+                        <SheetClose asChild>
+                          <Link
+                            to="/order-status"
+                            className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
+                          >
+                            <ClipboardList className="mr-2 h-4 w-4" />
+                            Orders
+                          </Link>
+                        </SheetClose>
+                      )}
 
                       {isAdmin() && (
                         <SheetClose asChild>

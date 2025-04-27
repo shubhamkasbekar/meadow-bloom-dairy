@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { orders } from "../data/mockData";
 import { Order, OrderStatus as OrderStatusType } from "../types";
 import { useAuth } from "../contexts/AuthContext";
+import { useOrder } from "../contexts/OrderContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ClipboardCheck,
@@ -9,6 +9,7 @@ import {
   Truck,
   CheckCircle,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -16,32 +17,7 @@ import { Progress } from "@/components/ui/progress";
 
 export default function OrderStatus() {
   const { user } = useAuth();
-  const [userOrders, setUserOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    // In a real app, this would fetch the user's orders from the backend
-    // For demo purposes, we'll create a mock order if none exist
-    if (user) {
-      if (orders.some((order) => order.userId === user.id)) {
-        setUserOrders(orders.filter((order) => order.userId === user.id));
-      } else {
-        // Create a mock order for demo purposes
-        const mockOrder: Order = {
-          id: `order-${Date.now()}`,
-          userId: user.id,
-          items: [{ product: orders[0].items[0].product, quantity: 1 }],
-          totalAmount: orders[0].items[0].product.price,
-          status: "placed",
-          createdAt: new Date().toISOString(),
-        };
-
-        setUserOrders([
-          mockOrder,
-          ...orders.filter((order) => order.status !== "placed"),
-        ]);
-      }
-    }
-  }, [user]);
+  const { orders, isLoading } = useOrder();
 
   // Helper functions to determine the status display
   const getStatusIcon = (status: OrderStatusType) => {
@@ -116,14 +92,23 @@ export default function OrderStatus() {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading your orders...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">Your Orders</h1>
 
-        {userOrders.length > 0 ? (
+        {orders.length > 0 ? (
           <div className="max-w-3xl mx-auto space-y-6">
-            {userOrders.map((order) => (
+            {orders.map((order) => (
               <Card key={order.id} className="overflow-hidden">
                 <CardHeader className="bg-gray-50">
                   <div className="flex justify-between items-center">
@@ -230,7 +215,7 @@ export default function OrderStatus() {
 
                   <div className="flex justify-between items-center font-medium">
                     <span>Total</span>
-                    <span>${order.totalAmount.toFixed(2)}</span>
+                    <span>₹{order.totalAmount.toFixed(2)}</span>
                   </div>
                 </CardContent>
               </Card>
