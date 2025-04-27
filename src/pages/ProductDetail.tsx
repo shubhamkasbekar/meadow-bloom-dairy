@@ -143,6 +143,12 @@ export default function ProductDetail() {
 
             <p className="text-gray-700 mb-6">{product.description}</p>
 
+            {!product.inStock && (
+              <p className="text-red-500 font-medium mb-4 text-lg">
+                Out of Stock
+              </p>
+            )}
+
             <Separator className="my-6" />
 
             <div className="space-y-4 mb-6">
@@ -172,7 +178,7 @@ export default function ProductDetail() {
                   variant="outline"
                   size="icon"
                   onClick={decreaseQuantity}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || !product.inStock}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -181,6 +187,7 @@ export default function ProductDetail() {
                   variant="outline"
                   size="icon"
                   onClick={increaseQuantity}
+                  disabled={!product.inStock}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -189,9 +196,10 @@ export default function ProductDetail() {
               <Button
                 className="flex-1 bg-dairy-accent hover:bg-dairy-brown text-white"
                 onClick={handleAddToCart}
+                disabled={!product.inStock}
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Add to Cart
+                {product.inStock ? "Add to Cart" : "Out of Stock"}
               </Button>
             </div>
           </div>

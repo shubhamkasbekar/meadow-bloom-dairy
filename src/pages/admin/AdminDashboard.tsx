@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Order, OrderStatus, Product } from "../../types";
+import { Order, OrderStatus, Product, ContactMessage } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +45,7 @@ import {
   Filter,
   Database,
   Loader2,
+  MessageSquare,
 } from "lucide-react";
 import InitializeFirestoreButton from "../../components/admin/InitializeFirestoreButton";
 import {
@@ -55,12 +56,14 @@ import {
   getAllOrders,
   updateOrderStatus as updateFirestoreOrderStatus,
 } from "../../lib/orderService";
+import { getAllContactMessages } from "../../lib/contactService";
 import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const { user, isAdmin, logout } = useAuth();
   const [ordersList, setOrdersList] = useState<Order[]>([]);
   const [productsList, setProductsList] = useState<Product[]>([]);
+  const [messagesList, setMessagesList] = useState<ContactMessage[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -83,6 +86,10 @@ export default function AdminDashboard() {
           // Fetch orders
           const ordersData = await getAllOrders();
           setOrdersList(ordersData);
+
+          // Fetch contact messages
+          const messagesData = await getAllContactMessages();
+          setMessagesList(messagesData);
         } catch (error) {
           console.error("Error fetching data:", error);
           toast.error("Failed to load data from Firestore");
@@ -124,6 +131,11 @@ export default function AdminDashboard() {
       </div>
     );
   }
+
+  // Count new messages
+  const newMessagesCount = messagesList.filter(
+    (message) => message.status === "new"
+  ).length;
 
   // Handle logout
   const handleLogout = () => {
@@ -262,76 +274,82 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="space-y-1">
-                <CardTitle>Products</CardTitle>
-                <CardDescription>Manage your product inventory</CardDescription>
-              </div>
-              <div className="bg-dairy-green p-2 rounded-full">
-                <Package className="h-6 w-6 text-dairy-accent" />
-              </div>
+              <CardTitle className="text-lg font-medium">
+                Total Products
+              </CardTitle>
+              <Package className="h-6 w-6 text-gray-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{productsList.length}</div>
-              <p className="text-sm text-gray-500">Total products in catalog</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="space-y-1">
-                <CardTitle>Orders</CardTitle>
-                <CardDescription>Manage customer orders</CardDescription>
-              </div>
-              <div className="bg-dairy-peach p-2 rounded-full">
-                <ShoppingBag className="h-6 w-6 text-dairy-accent" />
-              </div>
+              <CardTitle className="text-lg font-medium">
+                Total Orders
+              </CardTitle>
+              <ShoppingBag className="h-6 w-6 text-gray-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{ordersList.length}</div>
-              <p className="text-sm text-gray-500">
-                {
-                  ordersList.filter((order) => order.status !== "delivered")
-                    .length
-                }{" "}
-                pending,{" "}
-                {
-                  ordersList.filter((order) => order.status === "delivered")
-                    .length
-                }{" "}
-                delivered
-              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-lg font-medium">
+                Contact Messages
+              </CardTitle>
+              <MessageSquare className="h-6 w-6 text-gray-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{messagesList.length}</div>
+              {newMessagesCount > 0 && (
+                <div className="mt-2">
+                  <Badge className="bg-yellow-500">
+                    {newMessagesCount} new{" "}
+                    {newMessagesCount === 1 ? "message" : "messages"}
+                  </Badge>
+                </div>
+              )}
+              <div className="mt-4">
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/admin/messages">View Messages</Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Products Table */}
+        {/* Products Management */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Products</CardTitle>
-            <CardDescription>
-              Manage and update your product catalog
-            </CardDescription>
-            <div className="flex flex-col md:flex-row gap-4 mt-4">
-              <div className="relative flex-1">
+            <CardTitle>Products Management</CardTitle>
+            <CardDescription>Manage your product catalog</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4 flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
                   placeholder="Search products..."
+                  className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
                 />
               </div>
-              <div className="flex items-center w-full md:w-48 gap-2">
+              <div className="sm:w-48 flex items-center gap-2">
                 <Filter className="h-4 w-4 text-gray-500" />
                 <Select
                   value={categoryFilter}
                   onValueChange={setCategoryFilter}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="All Categories" />
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
@@ -344,189 +362,146 @@ export default function AdminDashboard() {
                 </Select>
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
+
+            {filteredProducts.length === 0 ? (
+              <p className="text-center py-8 text-gray-500">
+                {productsList.length === 0
+                  ? "No products found. Add a product to get started."
+                  : "No products match your search criteria."}
+              </p>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Product Name</TableHead>
+                    <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
+                    <TableHead>Stock Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
-                              <img
-                                src={product.images[0]}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <span>{product.name}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="capitalize">
+                  {filteredProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
                           {product.category}
-                        </TableCell>
-                        <TableCell>₹{product.price.toFixed(2)}</TableCell>
-                        <TableCell>
-                          {product.inStock ? (
-                            <Badge
-                              variant="outline"
-                              className="bg-green-100 text-green-800 border-green-200"
-                            >
-                              In Stock
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="bg-red-100 text-red-800 border-red-200"
-                            >
-                              Out of Stock
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm" asChild>
-                              <Link to={`/admin/products/${product.id}`}>
-                                <Edit className="h-4 w-4" />
-                              </Link>
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-red-500 hover:text-red-700"
-                              onClick={() => handleDeleteProduct(product.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={5}
-                        className="text-center py-4 text-gray-500"
-                      >
-                        No products found matching your search
+                        </Badge>
+                      </TableCell>
+                      <TableCell>₹{product.price.toFixed(2)}</TableCell>
+                      <TableCell>
+                        {product.inStock ? (
+                          <Badge className="bg-green-500">In Stock</Badge>
+                        ) : (
+                          <Badge className="bg-red-500">Out of Stock</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="icon" asChild>
+                            <Link to={`/admin/products/edit/${product.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  )}
+                  ))}
                 </TableBody>
               </Table>
-            </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Orders Table */}
+        {/* Recent Orders */}
         <Card>
           <CardHeader>
-            <CardTitle>Orders</CardTitle>
-            <CardDescription>View and manage customer orders</CardDescription>
+            <CardTitle>Recent Orders</CardTitle>
+            <CardDescription>
+              Monitor and manage customer orders
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            {ordersList.length === 0 ? (
+              <p className="text-center py-8 text-gray-500">No orders found</p>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Items</TableHead>
-                    <TableHead>Total</TableHead>
+                    <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ordersList.length > 0 ? (
-                    ordersList.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          #{order.id.substring(0, 8)}
-                        </TableCell>
-                        <TableCell>{formatDate(order.createdAt)}</TableCell>
-                        <TableCell>
-                          {order.items.reduce(
-                            (sum, item) => sum + item.quantity,
-                            0
-                          )}
-                        </TableCell>
-                        <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <StatusBadge status={order.status} />
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                Update Status{" "}
-                                <ChevronDown className="ml-2 h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateOrderStatus(order.id, "placed")
-                                }
-                              >
-                                Order Placed
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateOrderStatus(
-                                    order.id,
-                                    "processing"
-                                  )
-                                }
-                              >
-                                Processing
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateOrderStatus(
-                                    order.id,
-                                    "out-for-delivery"
-                                  )
-                                }
-                              >
-                                Out for Delivery
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateOrderStatus(order.id, "delivered")
-                                }
-                              >
-                                Delivered
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={6}
-                        className="text-center py-4 text-gray-500"
-                      >
-                        No orders found
+                  {ordersList.slice(0, 5).map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">
+                        {order.id.slice(0, 8)}...
+                      </TableCell>
+                      <TableCell>{formatDate(order.createdAt)}</TableCell>
+                      <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <span>Update Status</span>
+                              <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateOrderStatus(order.id, "placed")
+                              }
+                            >
+                              Placed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateOrderStatus(order.id, "processing")
+                              }
+                            >
+                              Processing
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateOrderStatus(
+                                  order.id,
+                                  "out-for-delivery"
+                                )
+                              }
+                            >
+                              Out for Delivery
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateOrderStatus(order.id, "delivered")
+                              }
+                            >
+                              Delivered
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  )}
+                  ))}
                 </TableBody>
               </Table>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -534,53 +509,17 @@ export default function AdminDashboard() {
   );
 }
 
-// Helper component for order status badges
 function StatusBadge({ status }: { status: OrderStatus }) {
   switch (status) {
     case "placed":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-blue-100 text-blue-800 border-blue-200"
-        >
-          Order Placed
-        </Badge>
-      );
+      return <Badge className="bg-blue-500">Placed</Badge>;
     case "processing":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-yellow-100 text-yellow-800 border-yellow-200"
-        >
-          Processing
-        </Badge>
-      );
+      return <Badge className="bg-yellow-500">Processing</Badge>;
     case "out-for-delivery":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-violet-100 text-violet-800 border-violet-200"
-        >
-          Out for Delivery
-        </Badge>
-      );
+      return <Badge className="bg-orange-500">Out for Delivery</Badge>;
     case "delivered":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-green-100 text-green-800 border-green-200"
-        >
-          Delivered
-        </Badge>
-      );
+      return <Badge className="bg-green-500">Delivered</Badge>;
     default:
-      return (
-        <Badge
-          variant="outline"
-          className="bg-gray-100 text-gray-800 border-gray-200"
-        >
-          Unknown
-        </Badge>
-      );
+      return <Badge>{status}</Badge>;
   }
 }

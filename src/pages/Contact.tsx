@@ -13,6 +13,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { PhoneCall, Mail, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { createContactMessage } from "../lib/contactService";
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -34,22 +35,44 @@ export default function Contact() {
     setForm((prev) => ({ ...prev, feedbackType: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!form.name || !form.email || !form.feedbackType || !form.message) {
+      toast.error("Please fill in all fields");
+      return;
+    }
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success("Thank you for your feedback!");
+    try {
+      // Save to Firestore
+      await createContactMessage({
+        name: form.name,
+        email: form.email,
+        feedbackType: form.feedbackType as
+          | "general"
+          | "product"
+          | "complaint"
+          | "suggestion",
+        message: form.message,
+      });
+
+      toast.success("Thank you for your feedback! We'll get back to you soon.");
       setForm({
         name: "",
         email: "",
         feedbackType: "",
         message: "",
       });
+    } catch (error) {
+      console.error("Error saving message:", error);
+      toast.error(
+        "There was a problem sending your message. Please try again."
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (

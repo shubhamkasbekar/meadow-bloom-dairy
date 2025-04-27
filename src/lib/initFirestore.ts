@@ -1,6 +1,7 @@
-import { products, orders } from "../data/mockData";
+import { products, orders, contactMessages } from "../data/mockData";
 import { initializeProductsInFirestore } from "./productService";
 import { initializeOrdersInFirestore } from "./orderService";
+import { initializeContactMessagesInFirestore } from "./contactService";
 import { db, doc, setDoc, Timestamp } from "./firebase";
 
 // Mock users data
@@ -68,6 +69,10 @@ export const initializeFirestore = async (): Promise<void> => {
     // Initialize orders collection
     await initializeOrdersInFirestore(orders);
     console.log("Orders initialized successfully");
+
+    // Initialize contact messages collection
+    await initializeContactMessagesInFirestore(contactMessages);
+    console.log("Contact messages initialized successfully");
 
     // Initialize users collection
     await initializeUsersInFirestore();

@@ -1,4 +1,4 @@
-import { Product, Order } from "../types";
+import { Product, Order, ContactMessage } from "../types";
 
 // Mock products data
 export const products: Product[] = [
@@ -359,5 +359,49 @@ export const whyChooseUs = [
     description:
       "All our products are free from artificial preservatives and additives.",
     icon: "Check",
+  },
+];
+
+// Mock Contact Messages
+export const contactMessages: ContactMessage[] = [
+  {
+    id: "msg1",
+    name: "Sara Johnson",
+    email: "sara.johnson@example.com",
+    feedbackType: "general",
+    message:
+      "I'm interested in purchasing your products in bulk for my cafe. Could you please provide information about wholesale pricing?",
+    status: "new",
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+  },
+  {
+    id: "msg2",
+    name: "Raj Patel",
+    email: "raj.patel@example.com",
+    feedbackType: "product",
+    message:
+      "I recently purchased your Basundi and it was absolutely delicious! Looking forward to trying more of your products.",
+    status: "read",
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+  },
+  {
+    id: "msg3",
+    name: "Anita Desai",
+    email: "anita.desai@example.com",
+    feedbackType: "complaint",
+    message:
+      "The milk I purchased yesterday was close to its expiry date. I would appreciate fresher stock in the future.",
+    status: "replied",
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+  },
+  {
+    id: "msg4",
+    name: "Michael Brown",
+    email: "michael.brown@example.com",
+    feedbackType: "suggestion",
+    message:
+      "Have you considered adding organic cheese to your product line? I think it would be a great addition!",
+    status: "new",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
   },
 ];

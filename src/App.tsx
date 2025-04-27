@@ -22,6 +22,7 @@ import OrderStatus from "./pages/OrderStatus";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import EditProduct from "./pages/admin/EditProduct";
+import ContactMessages from "./pages/admin/ContactMessages";
 import NotFound from "./pages/NotFound";
 
 // Create a client
@@ -49,7 +50,11 @@ const App = () => (
                   <Route path="signup" element={<Signup />} />
                 </Route>
                 <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/products/:id" element={<EditProduct />} />
+                <Route
+                  path="/admin/products/edit/:id"
+                  element={<EditProduct />}
+                />
+                <Route path="/admin/messages" element={<ContactMessages />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

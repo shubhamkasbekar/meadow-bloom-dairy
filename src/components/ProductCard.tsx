@@ -43,14 +43,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           <p className="text-lg font-bold text-dairy-accent mt-2">
             ₹{product.price.toFixed(2)}
           </p>
+          {!product.inStock && (
+            <p className="text-red-500 font-medium mt-1">Out of Stock</p>
+          )}
         </CardContent>
         <CardFooter className="p-4 pt-0">
           <Button
             onClick={handleAddToCart}
             className="w-full bg-dairy-cta hover:bg-dairy-cta/90 text-white"
+            disabled={!product.inStock}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
+            {product.inStock ? "Add to Cart" : "Out of Stock"}
           </Button>
         </CardFooter>
       </Card>

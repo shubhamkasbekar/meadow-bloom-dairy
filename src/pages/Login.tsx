@@ -29,7 +29,12 @@ export default function Login() {
 
     try {
       await login(email, password);
-      navigate("/");
+      const adminUser = JSON.parse(localStorage.getItem("admin-user") || "{}");
+      if (adminUser) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError("Failed to login. Please check your credentials.");
     } finally {

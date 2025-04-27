@@ -37,3 +37,13 @@ export type Order = {
   status: OrderStatus;
   createdAt: string;
 };
+
+export type ContactMessage = {
+  id: string;
+  name: string;
+  email: string;
+  feedbackType: "general" | "product" | "complaint" | "suggestion";
+  message: string;
+  status: "new" | "read" | "replied";
+  createdAt: string;
+};
