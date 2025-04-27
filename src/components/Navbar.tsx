@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -14,13 +13,13 @@ import {
   Package,
   Home,
   Phone,
-  Settings
+  Settings,
 } from "lucide-react";
-import { 
+import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetClose
+  SheetClose,
 } from "@/components/ui/sheet";
 
 export default function Navbar() {
@@ -40,23 +39,37 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-xl font-bold text-white">Meadow Bloom</span>
-            <span className="text-xl font-light ml-1 text-dairy-accent">Dairy</span>
+            <span className="text-xl font-bold text-white">Ramvishwas </span>
+            <span className="text-xl font-light ml-1 text-dairy-accent">
+              Dairy
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-white hover:text-dairy-accent transition-colors">
+            <Link
+              to="/"
+              className="text-white hover:text-dairy-accent transition-colors"
+            >
               Home
             </Link>
-            <Link to="/products" className="text-white hover:text-dairy-accent transition-colors">
+            <Link
+              to="/products"
+              className="text-white hover:text-dairy-accent transition-colors"
+            >
               Products
             </Link>
-            <Link to="/contact" className="text-white hover:text-dairy-accent transition-colors">
+            <Link
+              to="/contact"
+              className="text-white hover:text-dairy-accent transition-colors"
+            >
               Contact
             </Link>
             {isAdmin() && (
-              <Link to="/admin" className="text-white hover:text-dairy-accent transition-colors">
+              <Link
+                to="/admin"
+                className="text-white hover:text-dairy-accent transition-colors"
+              >
                 Admin
               </Link>
             )}
@@ -66,9 +79,11 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-dairy-light-accent">Hello, {user.firstName}</span>
-                <Button 
-                  variant="outline" 
+                <span className="text-sm text-dairy-light-accent">
+                  Hello, {user.firstName}
+                </span>
+                <Button
+                  variant="outline"
                   onClick={handleLogout}
                   className="flex items-center text-white border-white hover:bg-dairy-mid-primary"
                 >
@@ -79,9 +94,8 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Button
-                  variant="outline"
                   onClick={() => navigate("/login")}
-                  className="flex items-center text-white border-white hover:bg-dairy-mid-primary"
+                  className="flex items-center text-white border-white border-2 hover:bg-dairy-mid-primary"
                 >
                   <LogIn className="h-4 w-4 mr-2" />
                   Login
@@ -95,9 +109,9 @@ export default function Navbar() {
                 </Button>
               </div>
             )}
-            
-            <Button 
-              variant="ghost" 
+
+            <Button
+              variant="ghost"
               onClick={() => navigate("/cart")}
               className="relative text-white hover:bg-dairy-mid-primary"
             >
@@ -124,27 +138,35 @@ export default function Navbar() {
                 </span>
               )}
             </Button>
-            
+
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-dairy-mid-primary">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-dairy-mid-primary"
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-[250px] sm:w-[300px]">
                 <div className="flex flex-col h-full">
                   <div className="py-4">
-                    <h2 className="text-xl font-bold mb-4 text-dairy-primary">Meadow Bloom Dairy</h2>
-                    
+                    <h2 className="text-xl font-bold mb-4 text-dairy-primary">
+                      Meadow Bloom Dairy
+                    </h2>
+
                     {user ? (
                       <div className="mb-6 p-4 bg-dairy-light-accent rounded-md">
                         <p className="text-sm text-gray-600">Logged in as</p>
-                        <p className="font-medium text-dairy-primary">{user.firstName} {user.lastName}</p>
+                        <p className="font-medium text-dairy-primary">
+                          {user.firstName} {user.lastName}
+                        </p>
                       </div>
                     ) : (
                       <div className="mb-6 space-y-2">
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full justify-start border-dairy-primary text-dairy-primary hover:bg-dairy-light-accent"
                           onClick={() => navigate("/login")}
                           asChild
@@ -156,8 +178,8 @@ export default function Navbar() {
                             </Link>
                           </SheetClose>
                         </Button>
-                        
-                        <Button 
+
+                        <Button
                           className="w-full justify-start bg-dairy-cta hover:bg-dairy-cta/90"
                           onClick={() => navigate("/signup")}
                           asChild
@@ -171,7 +193,7 @@ export default function Navbar() {
                         </Button>
                       </div>
                     )}
-                    
+
                     <div className="space-y-1">
                       <SheetClose asChild>
                         <Link
@@ -182,7 +204,7 @@ export default function Navbar() {
                           Home
                         </Link>
                       </SheetClose>
-                      
+
                       <SheetClose asChild>
                         <Link
                           to="/products"
@@ -192,7 +214,7 @@ export default function Navbar() {
                           Products
                         </Link>
                       </SheetClose>
-                      
+
                       <SheetClose asChild>
                         <Link
                           to="/contact"
@@ -202,7 +224,7 @@ export default function Navbar() {
                           Contact
                         </Link>
                       </SheetClose>
-                      
+
                       {isAdmin() && (
                         <SheetClose asChild>
                           <Link
@@ -216,12 +238,12 @@ export default function Navbar() {
                       )}
                     </div>
                   </div>
-                  
+
                   {user && (
                     <div className="mt-auto border-t pt-4">
                       <SheetClose asChild>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full justify-start text-dairy-primary border-dairy-primary hover:bg-dairy-light-accent"
                           onClick={handleLogout}
                         >
