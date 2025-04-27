@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { orders, products } from "../../data/mockData";
@@ -10,7 +9,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -18,33 +17,33 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
+import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
-  SelectItem
+  SelectItem,
 } from "@/components/ui/select";
-import { 
-  ChevronDown, 
-  Package, 
-  ShoppingBag, 
-  Edit, 
-  Trash2, 
+import {
+  ChevronDown,
+  Package,
+  ShoppingBag,
+  Edit,
+  Trash2,
   Plus,
   LogOut,
   Search,
-  Filter
+  Filter,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -55,14 +54,16 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const navigate = useNavigate();
-  
+
   // Apply filters when search term or category changes
   useEffect(() => {
     if (user && isAdmin()) {
-      setFilteredProducts(filterProducts(productsList, searchTerm, categoryFilter));
+      setFilteredProducts(
+        filterProducts(productsList, searchTerm, categoryFilter)
+      );
     }
   }, [searchTerm, categoryFilter, productsList, user, isAdmin]);
-  
+
   // Protect admin route - IMPORTANT: Move this after all hooks are called
   if (!user || !isAdmin()) {
     return (
@@ -83,48 +84,56 @@ export default function AdminDashboard() {
       </div>
     );
   }
-  
+
   // Handle logout
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-  
+
   // Update order status
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
-    setOrdersList(prev => 
-      prev.map(order => 
-        order.id === orderId 
-          ? { ...order, status: newStatus } 
-          : order
+    setOrdersList((prev) =>
+      prev.map((order) =>
+        order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
   };
-  
+
   // Delete product
   const deleteProduct = (productId: string) => {
-    const updatedProducts = productsList.filter(product => product.id !== productId);
+    const updatedProducts = productsList.filter(
+      (product) => product.id !== productId
+    );
     setProductsList(updatedProducts);
-    setFilteredProducts(filterProducts(updatedProducts, searchTerm, categoryFilter));
+    setFilteredProducts(
+      filterProducts(updatedProducts, searchTerm, categoryFilter)
+    );
   };
-  
+
   // Format date
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric'
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
   // Filter and search products
-  const filterProducts = (products: Product[], term: string, category: string) => {
-    return products.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(term.toLowerCase()) ||
-                         product.description.toLowerCase().includes(term.toLowerCase());
-      const matchesCategory = category === "all" || product.category === category;
-      
+  const filterProducts = (
+    products: Product[],
+    term: string,
+    category: string
+  ) => {
+    return products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(term.toLowerCase()) ||
+        product.description.toLowerCase().includes(term.toLowerCase());
+      const matchesCategory =
+        category === "all" || product.category === category;
+
       return matchesSearch && matchesCategory;
     });
   };
@@ -135,8 +144,8 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleLogout}
               className="flex items-center"
             >
@@ -151,7 +160,7 @@ export default function AdminDashboard() {
             </Button>
           </div>
         </div>
-        
+
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
@@ -169,7 +178,7 @@ export default function AdminDashboard() {
               <p className="text-sm text-gray-500">Total products in catalog</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="space-y-1">
@@ -183,18 +192,28 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-3xl font-bold">{ordersList.length}</div>
               <p className="text-sm text-gray-500">
-                {ordersList.filter(order => order.status !== 'delivered').length} pending,{' '}
-                {ordersList.filter(order => order.status === 'delivered').length} delivered
+                {
+                  ordersList.filter((order) => order.status !== "delivered")
+                    .length
+                }{" "}
+                pending,{" "}
+                {
+                  ordersList.filter((order) => order.status === "delivered")
+                    .length
+                }{" "}
+                delivered
               </p>
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Products Table */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Products</CardTitle>
-            <CardDescription>Manage and update your product catalog</CardDescription>
+            <CardDescription>
+              Manage and update your product catalog
+            </CardDescription>
             <div className="flex flex-col md:flex-row gap-4 mt-4">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -207,7 +226,10 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center w-full md:w-48 gap-2">
                 <Filter className="h-4 w-4 text-gray-500" />
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
@@ -241,42 +263,46 @@ export default function AdminDashboard() {
                         <TableCell className="font-medium">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
-                              <img 
-                                src={product.images[0]} 
+                              <img
+                                src={product.images[0]}
                                 alt={product.name}
-                                className="w-full h-full object-cover" 
+                                className="w-full h-full object-cover"
                               />
                             </div>
                             <span>{product.name}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="capitalize">{product.category}</TableCell>
-                        <TableCell>${product.price.toFixed(2)}</TableCell>
+                        <TableCell className="capitalize">
+                          {product.category}
+                        </TableCell>
+                        <TableCell>₹{product.price.toFixed(2)}</TableCell>
                         <TableCell>
                           {product.inStock ? (
-                            <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                            <Badge
+                              variant="outline"
+                              className="bg-green-100 text-green-800 border-green-200"
+                            >
                               In Stock
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+                            <Badge
+                              variant="outline"
+                              className="bg-red-100 text-red-800 border-red-200"
+                            >
                               Out of Stock
                             </Badge>
                           )}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              asChild
-                            >
+                            <Button variant="outline" size="sm" asChild>
                               <Link to={`/admin/products/${product.id}`}>
                                 <Edit className="h-4 w-4" />
                               </Link>
                             </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
+                            <Button
+                              variant="outline"
+                              size="sm"
                               className="text-red-500 hover:text-red-700"
                               onClick={() => deleteProduct(product.id)}
                             >
@@ -288,7 +314,10 @@ export default function AdminDashboard() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">
+                      <TableCell
+                        colSpan={5}
+                        className="text-center py-4 text-gray-500"
+                      >
                         No products found matching your search
                       </TableCell>
                     </TableRow>
@@ -298,7 +327,7 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Orders Table */}
         <Card>
           <CardHeader>
@@ -321,9 +350,16 @@ export default function AdminDashboard() {
                 <TableBody>
                   {ordersList.map((order) => (
                     <TableRow key={order.id}>
-                      <TableCell className="font-medium">#{order.id.substring(0, 8)}</TableCell>
+                      <TableCell className="font-medium">
+                        #{order.id.substring(0, 8)}
+                      </TableCell>
                       <TableCell>{formatDate(order.createdAt)}</TableCell>
-                      <TableCell>{order.items.reduce((sum, item) => sum + item.quantity, 0)}</TableCell>
+                      <TableCell>
+                        {order.items.reduce(
+                          (sum, item) => sum + item.quantity,
+                          0
+                        )}
+                      </TableCell>
                       <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
                       <TableCell>
                         <StatusBadge status={order.status} />
@@ -332,20 +368,37 @@ export default function AdminDashboard() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm">
-                              Update Status <ChevronDown className="ml-2 h-4 w-4" />
+                              Update Status{" "}
+                              <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => updateOrderStatus(order.id, "placed")}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateOrderStatus(order.id, "placed")
+                              }
+                            >
                               Order Placed
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateOrderStatus(order.id, "processing")}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateOrderStatus(order.id, "processing")
+                              }
+                            >
                               Processing
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateOrderStatus(order.id, "out-for-delivery")}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateOrderStatus(order.id, "out-for-delivery")
+                              }
+                            >
                               Out for Delivery
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateOrderStatus(order.id, "delivered")}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateOrderStatus(order.id, "delivered")
+                              }
+                            >
                               Delivered
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -365,34 +418,49 @@ export default function AdminDashboard() {
 
 // Helper component for order status badges
 function StatusBadge({ status }: { status: OrderStatus }) {
-  switch(status) {
+  switch (status) {
     case "placed":
       return (
-        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+        <Badge
+          variant="outline"
+          className="bg-blue-100 text-blue-800 border-blue-200"
+        >
           Order Placed
         </Badge>
       );
     case "processing":
       return (
-        <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">
+        <Badge
+          variant="outline"
+          className="bg-yellow-100 text-yellow-800 border-yellow-200"
+        >
           Processing
         </Badge>
       );
     case "out-for-delivery":
       return (
-        <Badge variant="outline" className="bg-violet-100 text-violet-800 border-violet-200">
+        <Badge
+          variant="outline"
+          className="bg-violet-100 text-violet-800 border-violet-200"
+        >
           Out for Delivery
         </Badge>
       );
     case "delivered":
       return (
-        <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+        <Badge
+          variant="outline"
+          className="bg-green-100 text-green-800 border-green-200"
+        >
           Delivered
         </Badge>
       );
     default:
       return (
-        <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">
+        <Badge
+          variant="outline"
+          className="bg-gray-100 text-gray-800 border-gray-200"
+        >
           Unknown
         </Badge>
       );

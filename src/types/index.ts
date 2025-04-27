@@ -1,10 +1,9 @@
-
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
 };
 
 export type Product = {
@@ -12,7 +11,7 @@ export type Product = {
   name: string;
   description: string;
   price: number;
-  category: 'milk' | 'shrikhand' | 'drinks' | 'others';
+  category: "milk" | "shrikhand" | "drinks" | "basundi" | "others";
   ingredients: string[];
   expiryDate: string;
   images: string[];
@@ -24,7 +23,11 @@ export type CartItem = {
   quantity: number;
 };
 
-export type OrderStatus = 'placed' | 'processing' | 'out-for-delivery' | 'delivered';
+export type OrderStatus =
+  | "placed"
+  | "processing"
+  | "out-for-delivery"
+  | "delivered";
 
 export type Order = {
   id: string;
