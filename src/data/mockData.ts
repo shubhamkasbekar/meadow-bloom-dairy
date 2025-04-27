@@ -197,21 +197,21 @@ export const carouselItems = [
     title: "Farm Fresh Milk",
     description: "Straight from our farm to your table",
     image:
-      "https://images.unsplash.com/photo-1628088062854-d1870b4553da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGFpcnklMjBmYXJtfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=1200&q=60",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-1.jpg",
   },
   {
     id: "2",
     title: "Artisanal Dairy Products",
     description: "Crafted with care using traditional methods",
     image:
-      "https://images.unsplash.com/photo-1618580929334-668974537252?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8ZGFpcnklMjBwcm9kdWN0c3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=1200&q=60",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-2.jpg",
   },
   {
     id: "3",
     title: "Organic Shrikhand",
     description: "A sweet treat for your special moments",
     image:
-      "https://images.unsplash.com/photo-1551892589-865f69869476?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8eW9ndXJ0JTIwZGVzc2VydHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=1200&q=60",
+      "https://raw.githubusercontent.com/shubhamkasbekar/meadow-bloom-dairy/refs/heads/main/src/assets/images/slide-3.jpg",
   },
 ];
 

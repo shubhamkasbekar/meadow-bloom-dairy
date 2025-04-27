@@ -83,9 +83,9 @@ export default function Navbar() {
                   Hello, {user.firstName}
                 </span>
                 <Button
-                  variant="outline"
+                  // variant="outline"
                   onClick={handleLogout}
-                  className="flex items-center text-white border-white hover:bg-dairy-mid-primary"
+                  className="flex items-center text-white border-white border-2 hover:bg-dairy-mid-primary"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
