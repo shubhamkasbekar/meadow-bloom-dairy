@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { products } from "../data/mockData";
 import { Product } from "../types";
 import ProductCard from "../components/ProductCard";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { getAllProducts } from "../lib/productService";
 
 export default function Products() {
   const location = useLocation();
@@ -18,8 +18,28 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     categoryParam
   );
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const productsData = await getAllProducts();
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Filter products when search or category changes
   useEffect(() => {
     let result = products;
 
@@ -40,7 +60,7 @@ export default function Products() {
     }
 
     setFilteredProducts(result);
-  }, [selectedCategory, searchTerm]);
+  }, [selectedCategory, searchTerm, products]);
 
   return (
     <div className="min-h-screen bg-dairy-light-accent py-12">
@@ -107,7 +127,12 @@ export default function Products() {
 
           {/* Product Grid */}
           <div className="lg:col-span-3">
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center items-center h-60">
+                <Loader2 className="h-8 w-8 animate-spin text-dairy-primary" />
+                <span className="ml-2">Loading products...</span>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <>
                 <p className="mb-4 text-gray-600">
                   {filteredProducts.length} products found

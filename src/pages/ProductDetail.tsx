@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { products } from "../data/mockData";
 import { useCart } from "../contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,10 +10,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
+import { ChevronLeft, ShoppingCart, Plus, Minus, Loader2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { getProductById } from "../lib/productService";
+import { Product } from "../types";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,17 +23,30 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
 
   const [quantity, setQuantity] = useState(1);
-  const [product, setProduct] = useState(products.find((p) => p.id === id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!product) {
-      navigate("/products", { replace: true });
-    }
-  }, [product, navigate]);
+    const fetchProduct = async () => {
+      if (!id) return;
 
-  if (!product) {
-    return null;
-  }
+      setIsLoading(true);
+      try {
+        const productData = await getProductById(id);
+        setProduct(productData);
+        if (!productData) {
+          navigate("/products", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        navigate("/products", { replace: true });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id, navigate]);
 
   const increaseQuantity = () => {
     setQuantity((q) => q + 1);
@@ -45,7 +59,9 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    if (product) {
+      addToCart(product, quantity);
+    }
   };
 
   // Format expiry date
@@ -57,6 +73,21 @@ export default function ProductDetail() {
     };
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+          <p>Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

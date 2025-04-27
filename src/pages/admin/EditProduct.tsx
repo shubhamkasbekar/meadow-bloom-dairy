@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Product } from "../../types";
-import { products } from "../../data/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,8 +22,13 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { ChevronLeft, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  getProductById,
+  addProduct,
+  updateProduct,
+} from "../../lib/productService";
 
 export default function EditProduct() {
   const { id } = useParams<{ id: string }>();
@@ -45,20 +49,35 @@ export default function EditProduct() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(!isNewProduct);
 
   useEffect(() => {
-    if (!isNewProduct) {
-      const existingProduct = products.find((p) => p.id === id);
-      if (existingProduct) {
-        setProduct({
-          ...existingProduct,
-          expiryDate: new Date(existingProduct.expiryDate)
-            .toISOString()
-            .split("T")[0],
-        });
-      } else {
-        navigate("/admin", { replace: true });
-      }
+    if (!isNewProduct && id) {
+      const fetchProduct = async () => {
+        setIsFetching(true);
+        try {
+          const productData = await getProductById(id);
+          if (productData) {
+            setProduct({
+              ...productData,
+              expiryDate: new Date(productData.expiryDate)
+                .toISOString()
+                .split("T")[0],
+            });
+          } else {
+            toast.error("Product not found");
+            navigate("/admin", { replace: true });
+          }
+        } catch (error) {
+          console.error("Error fetching product:", error);
+          toast.error("Failed to load product");
+          navigate("/admin", { replace: true });
+        } finally {
+          setIsFetching(false);
+        }
+      };
+
+      fetchProduct();
     }
   }, [id, isNewProduct, navigate]);
 
@@ -90,8 +109,16 @@ export default function EditProduct() {
     setProduct((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({ ...prev, [name]: parseFloat(value) }));
+  };
+
   const handleSelectChange = (value: string) => {
-    setProduct((prev) => ({ ...prev, category: value as any }));
+    setProduct((prev) => ({
+      ...prev,
+      category: value as "milk" | "shrikhand" | "drinks" | "basundi" | "others",
+    }));
   };
 
   const handleSwitchChange = (checked: boolean) => {
@@ -130,21 +157,42 @@ export default function EditProduct() {
     setProduct((prev) => ({ ...prev, images: updatedImages }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
       if (isNewProduct) {
+        // Create new product
+        const { id, ...productData } = product;
+        await addProduct(productData);
         toast.success("Product created successfully!");
       } else {
+        // Update existing product
+        await updateProduct(product.id, product);
         toast.success("Product updated successfully!");
       }
-      setIsLoading(false);
       navigate("/admin");
-    }, 1000);
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast.error(
+        isNewProduct ? "Failed to create product" : "Failed to update product"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isFetching) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+          <p>Loading product data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -200,7 +248,7 @@ export default function EditProduct() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price ($)</Label>
+                    <Label htmlFor="price">Price (₹)</Label>
                     <Input
                       id="price"
                       name="price"
@@ -208,7 +256,7 @@ export default function EditProduct() {
                       step="0.01"
                       min="0"
                       value={product.price}
-                      onChange={handleChange}
+                      onChange={handleNumberChange}
                       placeholder="0.00"
                       required
                     />
@@ -217,7 +265,7 @@ export default function EditProduct() {
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
                     <Select
-                      defaultValue={product.category}
+                      value={product.category}
                       onValueChange={handleSelectChange}
                     >
                       <SelectTrigger id="category">
@@ -227,6 +275,7 @@ export default function EditProduct() {
                         <SelectItem value="milk">Milk</SelectItem>
                         <SelectItem value="shrikhand">Shrikhand</SelectItem>
                         <SelectItem value="drinks">Drinks</SelectItem>
+                        <SelectItem value="basundi">Basundi</SelectItem>
                         <SelectItem value="others">Others</SelectItem>
                       </SelectContent>
                     </Select>
@@ -371,26 +420,7 @@ export default function EditProduct() {
               >
                 {isLoading ? (
                   <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                    <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
                     Saving...
                   </span>
                 ) : isNewProduct ? (

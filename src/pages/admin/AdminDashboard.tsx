@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { products } from "../../data/mockData";
 import { Order, OrderStatus, Product } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -157,23 +156,25 @@ export default function AdminDashboard() {
 
   // Delete product
   const handleDeleteProduct = async (productId: string) => {
-    try {
-      // Delete from Firestore
-      await deleteFirestoreProduct(productId);
+    if (confirm("Are you sure you want to delete this product?")) {
+      try {
+        // Delete from Firestore
+        await deleteFirestoreProduct(productId);
 
-      // Update local state
-      const updatedProducts = productsList.filter(
-        (product) => product.id !== productId
-      );
-      setProductsList(updatedProducts);
-      setFilteredProducts(
-        filterProducts(updatedProducts, searchTerm, categoryFilter)
-      );
+        // Update local state
+        const updatedProducts = productsList.filter(
+          (product) => product.id !== productId
+        );
+        setProductsList(updatedProducts);
+        setFilteredProducts(
+          filterProducts(updatedProducts, searchTerm, categoryFilter)
+        );
 
-      toast.success("Product deleted successfully");
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product");
+        toast.success("Product deleted successfully");
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast.error("Failed to delete product");
+      }
     }
   };
 

@@ -67,12 +67,20 @@ export default function Navbar() {
               Contact
             </Link>
             {user && (
-              <Link
-                to="/order-status"
-                className="text-white hover:text-dairy-accent transition-colors"
-              >
-                Orders
-              </Link>
+              <>
+                <Link
+                  to="/order-status"
+                  className="text-white hover:text-dairy-accent transition-colors"
+                >
+                  Orders
+                </Link>
+                <Link
+                  to="/profile"
+                  className="text-white hover:text-dairy-accent transition-colors"
+                >
+                  Profile
+                </Link>
+              </>
             )}
             {isAdmin() && (
               <Link
@@ -171,6 +179,15 @@ export default function Navbar() {
                         <p className="font-medium text-dairy-primary">
                           {user.firstName} {user.lastName}
                         </p>
+                        <SheetClose asChild>
+                          <Link
+                            to="/profile"
+                            className="flex items-center mt-2 text-sm text-dairy-primary hover:text-dairy-primary/80"
+                          >
+                            <Settings className="mr-1 h-3 w-3" />
+                            Manage Profile
+                          </Link>
+                        </SheetClose>
                       </div>
                     ) : (
                       <div className="mb-6 space-y-2">
@@ -235,15 +252,27 @@ export default function Navbar() {
                       </SheetClose>
 
                       {user && (
-                        <SheetClose asChild>
-                          <Link
-                            to="/order-status"
-                            className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
-                          >
-                            <ClipboardList className="mr-2 h-4 w-4" />
-                            Orders
-                          </Link>
-                        </SheetClose>
+                        <>
+                          <SheetClose asChild>
+                            <Link
+                              to="/order-status"
+                              className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
+                            >
+                              <ClipboardList className="mr-2 h-4 w-4" />
+                              Orders
+                            </Link>
+                          </SheetClose>
+
+                          <SheetClose asChild>
+                            <Link
+                              to="/profile"
+                              className="flex items-center px-2 py-2 rounded-md hover:bg-dairy-light-accent text-dairy-primary"
+                            >
+                              <Settings className="mr-2 h-4 w-4" />
+                              Profile
+                            </Link>
+                          </SheetClose>
+                        </>
                       )}
 
                       {isAdmin() && (
