@@ -278,7 +278,7 @@ export const orders: Order[] = [
 export const testimonials = [
   {
     id: "1",
-    name: "Abhishek Shitole",
+    name: "Shubham Kasbekar",
     role: "Regular Customer",
     content:
       "मी गेली तीन वर्षे या डेअरीतून दूध खरेदी करत आहे. दूधाची गुणवत्ता नेहमीच उत्कृष्ट असते आणि माझ्या कुटुंबाला ते खूप आवडते!",
