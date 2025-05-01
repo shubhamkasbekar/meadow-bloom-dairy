@@ -243,7 +243,7 @@ export default function AdminDashboard() {
               Logout
             </Button>
             <Button asChild className="bg-dairy-accent hover:bg-dairy-brown">
-              <Link to="/admin/products/new">
+              <Link to="/admin/products/edit/new">
                 <Plus className="mr-2 h-4 w-4" />
                 Add New Product
               </Link>
